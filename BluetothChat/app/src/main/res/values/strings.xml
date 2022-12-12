@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">BluetoothChat</string>
+    <string name="bl_server_name">BluetoothChat</string>
+    <string name="app_uuid">11146fe5-7004-48ad-8d94-58e6fa1a9284</string>
+</resources>

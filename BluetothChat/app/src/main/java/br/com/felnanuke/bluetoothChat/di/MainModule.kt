@@ -1,6 +1,7 @@
 package br.com.felnanuke.bluetoothChat.di
 
 import android.app.Application
+import br.com.felnanuke.bluetoothChat.core.domain.repositories.MessageRepository
 import br.com.felnanuke.bluetoothChat.core.domain.repositories.PairsRepository
 import br.com.felnanuke.bluetoothChat.core.domain.repositories.ServerRepository
 import br.com.felnanuke.bluetoothChat.core.infrastructure.nearby_connections.data_sources.NearbyConnectionsServerDataSource
@@ -20,8 +21,14 @@ object MainModule {
 
     @Provides
     @Singleton
-    fun providesServerRepository(serverDataSource: NearbyConnectionsServerDataSource): ServerRepository {
-        return ServerRepository(serverDataSource = serverDataSource)
+    fun providesServerRepository(
+        serverDataSource: NearbyConnectionsServerDataSource,
+        messageDataSource: RealmMessagesDataSource,
+        pairDataSource: RealmPairDataSource
+    ): ServerRepository {
+        return ServerRepository(
+            serverDataSource = serverDataSource, messageDataSource, pairDataSource
+        )
     }
 
     @Provides
@@ -34,7 +41,6 @@ object MainModule {
         return NearbyConnectionsServerDataSource(
             application,
             pairDataSource,
-            messagesDataSource,
 
             )
     }
@@ -61,6 +67,12 @@ object MainModule {
     @Singleton
     fun providesPairsRepository(pairDataSource: RealmPairDataSource): PairsRepository {
         return PairsRepository(pairDataSource)
+    }
+
+    @Provides
+    @Singleton
+    fun providesMessagesRepository(messagesDataSource: RealmMessagesDataSource): MessageRepository {
+        return MessageRepository(messagesDataSource)
     }
 
 

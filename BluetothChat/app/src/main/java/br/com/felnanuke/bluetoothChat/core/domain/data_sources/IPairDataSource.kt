@@ -3,8 +3,10 @@ package br.com.felnanuke.bluetoothChat.core.domain.data_sources
 import br.com.felnanuke.bluetoothChat.core.domain.entities.PairEntity
 import br.com.felnanuke.bluetoothChat.core.domain.enums.PairStatus
 import br.com.felnanuke.bluetoothChat.core.domain.exceptions.ConnectionException
+import br.com.felnanuke.bluetoothChat.core.domain.listeners.IPairsListener
 
 interface IPairDataSource {
+
 
     fun add(pairsListener: IPairsListener)
     fun remove(pairsListener: IPairsListener)
@@ -22,6 +24,8 @@ interface IPairDataSource {
         onGetPairs: (pairs: List<PairEntity>) -> Unit
     )
 
+    fun getPairsSilently()
+
     fun updatePair(pair: PairEntity, onSuccess: (PairEntity) -> Unit, onError: (Exception) -> Unit)
 
     fun updatePair(
@@ -31,6 +35,10 @@ interface IPairDataSource {
         onError: ((Exception) -> Unit)? = null
     )
 
-    fun deletePair(pair: PairEntity, onSuccess: (PairEntity) -> Unit, onError: (Exception) -> Unit)
+    fun deletePair(
+        pair: PairEntity,
+        onSuccess: ((PairEntity) -> Unit)?,
+        onError: ((Exception) -> Unit)?
+    )
 
 }

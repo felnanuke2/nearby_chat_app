@@ -6,6 +6,7 @@ class AppRoutes {
         const val ROUTE_PAIRS = "pairs"
         const val ROUTE_HOME = "home"
         const val KEY_PAIR_ID = "pairId"
+        const val ROUTE_PROFILE = "profile"
         const val ROUTE_CHAT = "chat/{$KEY_PAIR_ID}"
 
     }

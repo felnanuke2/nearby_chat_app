@@ -8,12 +8,13 @@ import android.bluetooth.BluetoothSocket
 import android.content.Context
 import androidx.annotation.RequiresPermission
 import br.com.felnanuke.bluetoothChat.R
-import br.com.felnanuke.bluetoothChat.core.domain.data_sources.IMessageListener
-import br.com.felnanuke.bluetoothChat.core.domain.data_sources.IPairsListener
+import br.com.felnanuke.bluetoothChat.core.domain.listeners.IMessageListener
+import br.com.felnanuke.bluetoothChat.core.domain.listeners.IPairsListener
 import br.com.felnanuke.bluetoothChat.core.domain.data_sources.IServerDataSource
 import br.com.felnanuke.bluetoothChat.core.domain.entities.MessageEntity
 import br.com.felnanuke.bluetoothChat.core.domain.entities.PairEntity
 import br.com.felnanuke.bluetoothChat.core.domain.exceptions.ConnectionException
+import br.com.felnanuke.bluetoothChat.core.domain.listeners.IServerListener
 import java.io.IOException
 import java.util.UUID
 
@@ -38,6 +39,13 @@ class BluetoothServerDataSource(private val application: Application) : IServerD
 
     }
 
+    override fun add(listener: IServerListener) {
+        TODO("Not yet implemented")
+    }
+
+    override fun remove(listener: IServerListener) {
+        TODO("Not yet implemented")
+    }
 
 
     @RequiresPermission(value = "android.permission.BLUETOOTH_CONNECT")

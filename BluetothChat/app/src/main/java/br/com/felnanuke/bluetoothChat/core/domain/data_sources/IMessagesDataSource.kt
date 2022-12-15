@@ -3,6 +3,7 @@ package br.com.felnanuke.bluetoothChat.core.domain.data_sources
 import br.com.felnanuke.bluetoothChat.core.domain.entities.MessageEntity
 import br.com.felnanuke.bluetoothChat.core.domain.entities.PairEntity
 import br.com.felnanuke.bluetoothChat.core.domain.exceptions.GetMessageError
+import br.com.felnanuke.bluetoothChat.core.domain.listeners.IMessageListener
 
 interface IMessagesDataSource {
 
@@ -13,8 +14,8 @@ interface IMessagesDataSource {
 
     fun getMessages(
         recipient: PairEntity,
-        offset: Long = 0,
-        limit: Long = 30,
+        offset: Int = 0,
+        limit: Int = 30,
         onGetMessages: (messages: List<MessageEntity>) -> Unit,
         onError: (exception: GetMessageError) -> Unit
     )

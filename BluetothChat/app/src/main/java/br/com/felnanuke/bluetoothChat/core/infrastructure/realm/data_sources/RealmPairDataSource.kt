@@ -1,19 +1,23 @@
 package br.com.felnanuke.bluetoothChat.core.infrastructure.realm.data_sources
 
-import android.net.wifi.p2p.WifiP2pDevice.CONNECTED
 import br.com.felnanuke.bluetoothChat.core.domain.data_sources.IPairDataSource
-import br.com.felnanuke.bluetoothChat.core.domain.data_sources.IPairsListener
+import br.com.felnanuke.bluetoothChat.core.domain.listeners.IPairsListener
 import br.com.felnanuke.bluetoothChat.core.domain.entities.PairEntity
 import br.com.felnanuke.bluetoothChat.core.domain.enums.PairStatus
 import br.com.felnanuke.bluetoothChat.core.domain.exceptions.ConnectionException
 import br.com.felnanuke.bluetoothChat.core.infrastructure.realm.models.RealmPairModel
 import io.realm.kotlin.Realm
+import io.realm.kotlin.UpdatePolicy
 import io.realm.kotlin.ext.query
+import io.realm.kotlin.query.find
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class RealmPairDataSource(private val realm: Realm) : IPairDataSource {
+
+    private val pairs = mutableSetOf<PairEntity>()
+
     private val listeners = mutableSetOf<IPairsListener>()
 
 
@@ -27,16 +31,30 @@ class RealmPairDataSource(private val realm: Realm) : IPairDataSource {
     }
 
     override fun getMe(onSuccess: (PairEntity) -> Unit) {
-        onSuccess(PairEntity("Luiz Felipe", "1212", "1212"))
+        realm.query<RealmPairModel>("me == true").find().let { result ->
+            if (result.isEmpty()) {
+                realm.writeBlocking {
+                    val newPair = RealmPairModel().apply {
+                        me = true
+                    }
+                    copyToRealm(newPair, UpdatePolicy.ALL)
+                    onSuccess(newPair.asPairEntity())
+                }
+            } else {
+                onSuccess(result.first().asPairEntity())
+            }
+        }
+
     }
 
     override fun addPair(
         pair: PairEntity, onSuccess: ((PairEntity) -> Unit)?, onError: ((Exception) -> Unit)?
     ) {
-        realm.writeBlocking {
-            copyToRealm(RealmPairModel(pair))
-        }
-        onSuccess?.invoke(pair)
+        pairs.add(pair)
+//        realm.writeBlocking {
+//            copyToRealm(RealmPairModel(pair), UpdatePolicy.ALL)
+//        }
+//        onSuccess?.invoke(pair)
         notifyAllPairsChanged()
     }
 
@@ -46,8 +64,18 @@ class RealmPairDataSource(private val realm: Realm) : IPairDataSource {
     ) {
 
         realm.writeBlocking {
-            val pairs = query<RealmPairModel>().find()
+            val pairs = query<RealmPairModel>("me == false").find()
             onGetPairs.invoke(pairs.map { it.asPairEntity() })
+        }
+    }
+
+    override fun getPairsSilently() {
+
+        realm.query<RealmPairModel>("me == false").find { realmResult ->
+            val pairs = realmResult.map { realmPairModel ->
+                realmPairModel.asPairEntity()
+            }
+            notifyAllListeners(pairs)
         }
     }
 
@@ -68,25 +96,27 @@ class RealmPairDataSource(private val realm: Realm) : IPairDataSource {
     ) {
         pair.setPairStatus(status)
         realm.writeBlocking {
-            copyToRealm(RealmPairModel(pair))
+            copyToRealm(RealmPairModel(pair), UpdatePolicy.ALL)
         }
         onSuccess?.invoke(pair)
     }
 
     override fun deletePair(
-        pair: PairEntity, onSuccess: (PairEntity) -> Unit, onError: (Exception) -> Unit
+        pair: PairEntity, onSuccess: ((PairEntity) -> Unit)?, onError: ((Exception) -> Unit)?
     ) {
         realm.writeBlocking {
             delete(RealmPairModel(pair))
         }
-        onSuccess.invoke(pair)
+        onSuccess?.invoke(pair)
+    }
+
+    private fun notifyAllListeners(pairs: List<PairEntity>) {
+        listeners.forEach { it.onReceiveList(pairs) }
     }
 
     private fun notifyAllPairsChanged() {
         CoroutineScope(Dispatchers.Main).launch {
-            getPairs(onGetPairs = { pairs ->
-                listeners.forEach { it.onReceiveList(pairs) }
-            }, onError = {})
+            listeners.forEach { it.onReceiveList(pairs.toList()) }
         }
     }
 }

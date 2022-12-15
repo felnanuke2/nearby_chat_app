@@ -1,11 +1,14 @@
 package br.com.felnanuke.bluetoothChat.core.domain.entities
 
-import android.net.Uri
 import br.com.felnanuke.bluetoothChat.core.domain.enums.PairStatus
 
 @kotlinx.serialization.Serializable
 data class PairEntity(
-    val name: String, val address: String, val id: String,  val profileImage: Uri? = null
+    var name: String,
+    var address: String,
+    val id: String,
+    val profileImage: String? = null,
+    val me: Boolean = false
 ) {
     private var _status: PairStatus = PairStatus.Discovered
 

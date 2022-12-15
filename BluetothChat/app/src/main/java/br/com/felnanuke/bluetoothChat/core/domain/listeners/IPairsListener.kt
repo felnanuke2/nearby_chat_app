@@ -1,4 +1,4 @@
-package br.com.felnanuke.bluetoothChat.core.domain.data_sources
+package br.com.felnanuke.bluetoothChat.core.domain.listeners
 
 import br.com.felnanuke.bluetoothChat.core.domain.entities.PairEntity
 

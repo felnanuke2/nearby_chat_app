@@ -6,8 +6,8 @@ import br.com.felnanuke.bluetoothChat.core.infrastructure.realm.models.RealmPair
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
 
-const val REALM_NAME = "bluetooth_chat.realm2"
-const val REALM_SCHEMA_VERSION = 3L
+const val REALM_NAME = "bluetooth_chat.realm3"
+const val REALM_SCHEMA_VERSION = 15L
 
 class AppRealm {
 

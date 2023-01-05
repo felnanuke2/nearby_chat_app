@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hub_connect_organizer/tabs/dashboard/dashboard.dart';
+import 'package:hub_connect_organizer/tabs/reports/reports.dart';
 import 'package:hub_connect_organizer/widgets/home_drawer.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -23,9 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
         controller: _pageController,
         children: const [
           DashboardTab(),
-          Center(
-            child: Text('Reports'),
-          ),
+          ReportsTab(),
         ],
       ),
     );
